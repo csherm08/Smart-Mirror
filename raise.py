@@ -124,8 +124,8 @@ class Email(Frame):
         self.page=1
         self.side=LEFT
         self.anchor=N
-        self.username = "carterjsherman"
-        self.password = "bmxrbieixabzkzbn"
+        self.username = "xxxxxxxxxxx"
+        self.password = "xxxxxxxxxxx"
         self.unreadEmails = []
         self.readEmails()
         self.config(bg='black')
