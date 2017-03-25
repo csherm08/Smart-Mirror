@@ -80,10 +80,9 @@ class SampleApp(Tk):
         self.WeatherFrame = Weather(parent=topFrame, controller=self)
         self.NewsFrame = News(parent=topFrame, controller=self)
         self.ClockFrame= Clock(parent=topFrame, controller=self)
-        self.EmailCountFrame = EmailCount(parent=topFrame, controller=self)
 
         ## STORE IN ARRAY
-        self.frames= [self.EmailCountFrame, self.WeatherFrame, self.ClockFrame, self.NewsFrame, self.EmailFrame]
+        self.frames= [self.WeatherFrame, self.ClockFrame, self.NewsFrame, self.EmailFrame]
 
         # TEMP BUTTON TO GO PAGE TO PAGE (Replace with Python button)
         self.CurrentButton = Button(bottomFrame, text="Next Page", command=self.next_page)
@@ -99,7 +98,7 @@ class SampleApp(Tk):
         self.show_frames()
     def next_page(self):
         global count
-        count = count + 1
+        count+=1
         self.show_frames()
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
@@ -121,11 +120,13 @@ class SampleApp(Tk):
 class Email(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, background = 'black')
+        with open('credentials.json') as data_file:
+            credentials = json.load(data_file)
+        self.username = credentials["username"]
+        self.password = credentials["password"]
         self.page=1
         self.side=LEFT
         self.anchor=N
-        self.username = "xxxxxxxxxxx"
-        self.password = "xxxxxxxxxxx"
         self.unreadEmails = []
         self.readEmails()
         self.config(bg='black')
@@ -164,11 +165,10 @@ class Email(Frame):
                 typ, data = conn.store(num,'-FLAGS','\\Seen')
                 emailTuple = (msg['From'], msg['Subject'])
                 self.unreadEmails.append(emailTuple)
-                #print(msg['From'])
-                #print(msg['Subject'])
         conn.close()
-        #print(self.unreadEmails)
-
+        #Reverse list to get Emails in proper order
+        self.unreadEmails = self.unreadEmails[::-1]
+        self.after(60000, self.readEmails)
 class News(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, background = 'black')
