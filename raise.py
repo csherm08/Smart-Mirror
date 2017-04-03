@@ -1,4 +1,5 @@
 from Tkinter import *   # python3
+from functools import partial
 import RPi.GPIO as gpio
 import locale
 import threading
@@ -9,10 +10,15 @@ import traceback
 import feedparser
 import email
 import imaplib
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 #import Tkinter as tk   # python
 from contextlib import contextmanager
 from PIL import Image, ImageTk
 
+gpio.setmode(gpio.BCM)
+gpio.setup(17, gpio.IN, pull_up_down=gpio.PUD_UP)
 LOCALE_LOCK = threading.Lock()
 
 TITLE_FONT = ("Helvetica", 18, "bold")
@@ -85,15 +91,6 @@ class SampleApp(Tk):
         ## STORE IN ARRAY
         self.frames= [self.WeatherFrame, self.ClockFrame, self.NewsFrame, self.EmailFrame]
 
-        # TEMP BUTTON TO GO PAGE TO PAGE (Replace with Python button)
-        self.CurrentButton = Button(bottomFrame, text="Next Page", command=self.next_page)
-        self.CurrentButton.pack()
-        input_value = gpio.input(17)
-        if input_value == False:
-                while input_value == False:
-                        print("Button pressed")
-                        self.next_page
-                        input_value = gpio.input(17)
         # We want certain frames on the same page, so get array of pages count
         self.unique_pages = []
         for F in self.frames:
@@ -102,10 +99,14 @@ class SampleApp(Tk):
         print(len(self.unique_pages))
 
         self.show_frames()
+        callback=lambda *a: self.next_page()
+        input_value = gpio.input(17)
+        gpio.add_event_detect(17, gpio.FALLING, callback, bouncetime=300)
     def next_page(self):
         global count
         count+=1
         self.show_frames()
+        #time.sleep(1)
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
         self.attributes("-fullscreen", self.state)
