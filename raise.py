@@ -11,12 +11,14 @@ import feedparser
 import email
 import imaplib
 import sys
+import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
 #import Tkinter as tk   # python
 from contextlib import contextmanager
 from PIL import Image, ImageTk
 
+os.environ['DISPLAY'] = ':0' # Assuming your using HDMI this is for running headless
 gpio.setmode(gpio.BCM)
 gpio.setup(17, gpio.IN, pull_up_down=gpio.PUD_UP)
 LOCALE_LOCK = threading.Lock()
