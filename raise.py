@@ -1,4 +1,5 @@
-from tkinter import *   # python3
+from Tkinter import *   # python3
+import RPi.GPIO as gpio
 import locale
 import threading
 import time
@@ -87,7 +88,12 @@ class SampleApp(Tk):
         # TEMP BUTTON TO GO PAGE TO PAGE (Replace with Python button)
         self.CurrentButton = Button(bottomFrame, text="Next Page", command=self.next_page)
         self.CurrentButton.pack()
-
+        input_value = gpio.input(17)
+        if input_value == False:
+                while input_value == False:
+                        print("Button pressed")
+                        self.next_page
+                        input_value = gpio.input(17)
         # We want certain frames on the same page, so get array of pages count
         self.unique_pages = []
         for F in self.frames:
